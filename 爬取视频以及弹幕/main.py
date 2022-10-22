@@ -177,7 +177,7 @@ def scrape_txdm(url='https://v.qq.com/x/cover/mzc00200iqko65a/y0041ulfwap.html',
                 jj = random.choice(listWait)
                 listWait.remove(jj)
                 dm = dms[jj]
-                isFull = False
+                isFull = True
                 for j in range(0, dmRow):
                     tempTime = pre_dms[j] + len(dm['content']) * fontSize * delay
                     if tempTime < dmjg:
@@ -186,7 +186,7 @@ def scrape_txdm(url='https://v.qq.com/x/cover/mzc00200iqko65a/y0041ulfwap.html',
                         s = ss % (beginTime, endTime, height - (j + 1) * fontSize - 3, dm['content'])
                         assList_.append(s)
                         pre_dms[j] = tempTime + fontSize * 5 * delay
-                        isFull = True
+                        isFull = False
                         break
                 if isFull:
                     break
