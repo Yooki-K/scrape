@@ -1,4 +1,4 @@
-# 支持腾讯、B站、爱奇艺视频和弹幕下载，油管视频下载
+# 支持腾讯、B站、爱奇艺视频和弹幕(生成.ass文件)下载，油管视频下载
 
 #### 需要IDM、Node、浏览器
 
@@ -35,4 +35,7 @@
   + B站、腾讯、爱奇艺下载直接复制url，如：https://v.qq.com/x/cover/cp1qbee79qtg0w3/l0041l957r2.html 或者 https://www.bilibili.com/video/BV1Rt4y1M7Hc/ 或者 https://www.iqiyi.com/v_265kuc1ijco.html
   + 爱奇艺下载视频集需要使用电视剧首页的url  如：https://www.iqiyi.com/a_sn8astnfot.html
   + 支持youtube视频下载，仅支持单个视频下载
+  
+效果如图：
+![截图_2022-10-22_23-21](https://user-images.githubusercontent.com/61906563/197347282-635cbf0e-42bc-49f2-9e2a-46ab4dc6766d.png)
 
