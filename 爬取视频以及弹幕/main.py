@@ -43,25 +43,9 @@ def judgeEXERunning(exe='IDMan'):
     return True
 
 
-def clearDir(dir_path):
-    dir = os.walk(dir_path)
-    for x, y, z in dir:  # 当前主目录 当前主目录下的所有目录 当前主目录下的所有文件
-        for n in z:
-            os.remove(os.path.join(os.path.join(os.getcwd(), dir_path), n))
-
-
-def findTag(tagName, content):
-    res = re.search(f'<{tagName}>(.*?)</{tagName}>', content)
-    if res is not None:
-        return res.group(1)
-    else:
-        return None
-
-
 # --------------------------------变量定义------------------------------------
 settingPath = 'setting.json'
 conf = read_data_by_json(settingPath)
-downPath = conf['path_section']['downPath']
 IDMPath = conf['path_section']['IDMPath']
 nodePath = conf['path_section']['nodePath']
 browserPath = conf['path_section']['browserPath']
@@ -126,6 +110,7 @@ urlDomain = {
     'youtube': 'www.youtube.com'
 }
 #  必须的参数
+downPath = conf['param_section']['downPath']
 URL = conf['param_section']['url']
 needList = parseSelectedPart()
 
@@ -144,14 +129,9 @@ p = None
 browser = None
 if is_start_playwright:
     p = sync_playwright().start()
-    if re.search('firefox', browserPath, re.I) is not None:
-        browser = p.firefox.launch(headless=is_headless,
-                                   executable_path=browserPath,
-                                   )
-    else:
-        browser = p.chromium.launch(headless=is_headless,
-                                    executable_path=browserPath,
-                                    )
+    browser = p.chromium.launch(headless=is_headless,
+                                executable_path=browserPath,
+                                )
 
 hhh = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -163,6 +143,7 @@ hhh = {
 # --------------------------------腾讯视频------------------------------------
 
 
+txUrl = 'https://v.qq.com/x/cover/mzc00200iqko65a/s0041x6yrhq.html'
 dmjg = 30000  # 弹幕出现时间间隔
 
 
@@ -179,8 +160,11 @@ def scrape_txdm(url='https://v.qq.com/x/cover/mzc00200iqko65a/y0041ulfwap.html',
     r = requests.get(txdm_base, headers=hhh)
     j = r.json()
     segment_index = j['segment_index']
+    assList_ = assList.copy()
     for x in tqdm(segment_index):
         x = segment_index[x]
+        startTime = int(x['segment_start'])
+        # todo
         dms = requests.get(txdm + x['segment_name'], headers=hhh)
         time.sleep(0.5)
         if dms:
@@ -188,33 +172,28 @@ def scrape_txdm(url='https://v.qq.com/x/cover/mzc00200iqko65a/y0041ulfwap.html',
             dms = dms['barrage_list']
             if len(dms) == 0: continue
             listWait = [xx for xx in range(0, len(dms))]
-            listChoiced = []
-            i = 0
-            isOK = False
-            while len(listWait) > 0 and not isOK:
-                j = random.choice(listWait)
-                listWait.remove(j)
-                listChoiced.append(j)
-                dm = dms[j]
-                delayTime = 0
-                if i - 10 >= 0:
-                    length = len(dms[listChoiced[i - 10]]['content'])
-                    delayTime = (length * fontSize + fontSize * 5) * delay
-                delayTimeAll = delayTime + len(dm['content']) * fontSize * delay
-                if delayTimeAll > dmjg:
-                    i += 1
-                    isOK = True
-                    continue
-                beginTime = getTime(int(x['segment_start']) + delayTime)
-                endTime = getTime(int(x['segment_start']) + delayTimeAll + width * delay)
-                h = height - ((i + 1) % dmRow) * fontSize - 3
-                s = ss % (beginTime, endTime, h, dm['content'])
-                assList.append(s)
-                i += 1
+            pre_dms = [0] * dmRow
+            while len(listWait) > 0:
+                jj = random.choice(listWait)
+                listWait.remove(jj)
+                dm = dms[jj]
+                isFull = False
+                for j in range(0, dmRow):
+                    tempTime = pre_dms[j] + len(dm['content']) * fontSize * delay
+                    if tempTime < dmjg:
+                        beginTime = getTime(startTime + pre_dms[j])
+                        endTime = getTime(startTime + tempTime + width * delay)
+                        s = ss % (beginTime, endTime, height - (j + 1) * fontSize - 3, dm['content'])
+                        assList_.append(s)
+                        pre_dms[j] = tempTime + fontSize * 5 * delay
+                        isFull = True
+                        break
+                if isFull:
+                    break
         else:
             print('scrape error', txdm + x['segment_name'])
     with open(f'{downPath}\\{name}.ass', 'w', encoding='utf8') as f:
-        f.writelines(assList)
+        f.writelines(assList_)
     print('爬取 %s 弹幕成功' % name)
 
 
@@ -282,6 +261,7 @@ def scrape_bzdm(cid, aid, name):
     p = Popen([nodePath, bzJSPath, os.getcwd() + '\\temp', str(cid), str(aid)], stdout=PIPE)
     out = p.stdout.readlines()
     if b'success' in out[0]:
+        assList_ = assList.copy()
         biliPath = str(out[1], encoding='utf8').replace('\n', '')
         dms = read_data_by_json(biliPath)
         if len(dms) == 0: return
@@ -295,11 +275,11 @@ def scrape_bzdm(cid, aid, name):
                     beginTime = getTime(dm['progress'])
                     endTime = getTime(dm['progress'] + (len(dm['content']) * fontSize + width) * delay)
                     s = ss % (beginTime, endTime, height - (j + 1) * fontSize - 3, dm['content'])
-                    assList.append(s)
+                    assList_.append(s)
                     pre_dms[j] = dm['progress'] + len(dm['content']) * fontSize * delay
                     break
         with open(f"{downPath}\\{name}.ass", 'w', encoding='utf8') as f:
-            f.writelines(assList)
+            f.writelines(assList_)
         os.remove(biliPath)
         print('爬取 %s 弹幕成功' % name)
     else:
@@ -319,7 +299,16 @@ if False:
         print(subtitleData)
 
 
-# ------------------------------------------爱奇艺--------------------------------------------
+def findTag(tagName, content):
+    res = re.search(f'<{tagName}>(.*?)</{tagName}>', content)
+    if res is not None:
+        return res.group(1)
+    else:
+        return None
+
+
+# ------------------------------------------爱奇艺一----------------------------------------
+aqyUrl = 'https://www.iqiyi.com/a_sn8astnfot.html'
 
 
 def scrape_aqydm(tvid: str = '8784217387413500', duration: str = '45:23', name='test'):
@@ -382,6 +371,12 @@ def scrape_by_playwright_aqyVideoList(browser: Browser, url=aqyUrl):
 
 
 # ----------------------------------运行汇总----------------------------------
+def clearDir(dir_path):
+    dir = os.walk(dir_path)
+    for x, y, z in dir:  # 当前主目录 当前主目录下的所有目录 当前主目录下的所有文件
+        for n in z:
+            os.remove(os.path.join(os.path.join(os.getcwd(), dir_path), n))
+
 
 def startIDMQueue():
     Popen([f'{IDMPath}', '/s'])
@@ -406,7 +401,6 @@ def scrape_by_playwright_net_video(browser: Browser, url='https://v.qq.com/x/cov
             print(e)
             print('加载页面失败 %s' % jxurl)
             continue
-        input()
         d = {}
         try:
             with page.expect_response(videoUrlType) as response_info:
@@ -508,17 +502,19 @@ def run(url=txUrl, domain='tx'):
 
 
 # ----------------------------------运行代码----------------------------------
-if TYPE is None:
-    print('无法识别url：' + URL)
-else:
-    run(URL, TYPE)
+if __name__ == '__main__':
 
-if is_auto_clear_temp:
-    clearDir("./temp")
-    clearDir("./tool/Logs")
+    if TYPE is None:
+        print('无法识别url：' + URL)
+    else:
+        run(URL, TYPE)
 
-if is_start_playwright:
-    try:
-        browser.close()
-    except Exception:
-        pass
+    if is_auto_clear_temp:
+        clearDir("./temp")
+        clearDir("./tool/Logs")
+
+    if is_start_playwright:
+        try:
+            browser.close()
+        except Exception:
+            pass
