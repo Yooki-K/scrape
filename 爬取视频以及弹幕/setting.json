@@ -1,0 +1,73 @@
+{
+  "version": "v4.1",
+  "description": "支持腾讯、B站、爱奇艺视频、弹幕下载，支持youtube视频下载",
+  "param_section": {
+    "downPath": "D:\\ChromeCoreDownloads\\ipad共享\\底线",
+    "is_scrape_dm": false,
+    "is_scrape_video": true,
+    "is_headless": false,
+    "is_auto_clear_temp": true,
+    "url": "https://www.youtube.com/watch?v=MU8xhYgHT0U",
+    "selectedPart": "1"
+  },
+  "path_section": {
+    "IDMPath": "D:\\迅雷下载\\Internet Download Manager\\IDMan.exe",
+    "nodePath": "D:\\Download\\node-win-x64\\node.exe",
+    "browserPath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+  },
+  "parse_interface_section": {
+    "normal": {
+    "综合/B站": "https://jx.bozrc.com:4433/player/?url=",
+    "冰豆": "https://api.qianqi.net/vip/?url=",
+    "虾米": "https://jx.xmflv.com/?url=",
+    "纯净/B站": "https://im1907.top/?jx=",
+    "爱豆": "https://jx.aidouer.net/?url=",
+    "OK解析": "https://okjx.cc/?url=",
+    "夜幕": "https://www.yemu.xyz/?url=",
+    "M3U8.TV": "https://jx.m3u8.tv/jiexi/?url=",
+    "人人迷": "https://jx.blbo.cc:4433/?url=",
+    "全民": "https://jx.blbo.cc:4433/?url=",
+    "七哥": "https://jx.nnxv.cn/tv.php?url=",
+    "迪奥": "https://123.1dior.cn/?url=",
+    "CK": "https://www.ckplayer.vip/jiexi/?url=",
+    "ckmov": "https://www.ckmov.vip/api.php?url=",
+    "playerjy/B站": "https://jx.playerjy.com/?url=",
+    "ccyjjd": "https://ckmov.ccyjjd.com/ckmov/?url=",
+    "诺诺": "https://www.ckmov.com/?url=",
+    "H8": "https://www.h8jx.com/jiexi.php?url=",
+    "BL": "https://vip.bljiex.com/?v=",
+    "解析la": "https://api.jiexi.la/?url=",
+    "MUTV": "https://jiexi.janan.net/jiexi/?url=",
+    "MAO": "https://www.mtosz.com/m3u8.php?url=",
+    "老板": "https://vip.laobandq.com/jiexi.php?url=",
+    "盘古": "https://www.pangujiexi.cc/jiexi.php?url=",
+    "盖世": "https://www.gai4.com/?url=",
+    "0523": "https://go.yh0523.cn/y.cy?url=",
+    "17云": "https://www.1717yun.com/jx/ty.php?url=",
+    "4K": "https://jx.4kdv.com/?url=",
+    "8090": "https://www.8090g.cn/?url=",
+    "诺讯": "https://www.nxflv.com/?url=",
+    "听乐": "https://jx.dj6u.com/?url=",
+    "180": "https://jx.000180.top/jx/?url=",
+    "无名": "https://www.administratorw.com/video.php?url="
+  },
+    "youtube": {
+      "ytdownfk":"https://downloader.twdown.online/en9322?search_query="
+    }
+  },
+  "barrage_section": {
+    "barrageMaxRow": 10,
+    "width": 1920,
+    "height": 1080,
+    "fontSize": 45,
+    "delay": 5,
+    "color": "00FFFFFF"
+  },
+  "video_section": {
+    "availableType": [
+      "mp4",
+      "flv",
+      "m3u8"
+    ]
+  }
+}
