@@ -37,7 +37,7 @@
   + 支持youtube视频下载，仅支持单个视频下载
   
 效果如图：
-![image1](https://user-images.githubusercontent.com/61906563/197347282-635cbf0e-42bc-49f2-9e2a-46ab4dc6766d.png)
+![image](https://user-images.githubusercontent.com/61906563/197353746-1068fc66-ba43-42d0-92bf-cddc8e554ea6.png)
 ![image2](https://user-images.githubusercontent.com/61906563/197347563-93ac5a27-68ee-42a7-a672-b429112aa12e.png)
 
 
